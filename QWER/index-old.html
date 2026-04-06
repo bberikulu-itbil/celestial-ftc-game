@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CELESTIAL FTC #32728 - Robot Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Космический фон */
+        .cosmos-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .moving-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: linear-gradient(45deg, transparent, #fff, transparent);
+            animation: shoot 3s linear infinite;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translateX(0) translateY(0) rotate(45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(300px) translateY(300px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .galaxy {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.3) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .constellation {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .constellation-line {
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 1;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .nav-links a:hover {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .lang-btn {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .lang-btn:hover {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.3);
+            color: #60a5fa;
+        }
+
+        .lang-btn.active {
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.05) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #94a3b8;
+        }
+
+        .team-number {
+            font-size: 1.4rem;
+            color: #a78bfa;
+            margin-bottom: 3rem;
+            font-weight: bold;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            font-size: 1.1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(96, 165, 250, 0.4);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(96, 165, 250, 0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(167, 139, 250, 0.4);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(167, 139, 250, 0.6);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(52, 211, 153, 0.4);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        .btn-info:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(52, 211, 153, 0.6);
+        }
+
+        /* Space Images */
+        .space-images {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .space-image {
+            position: absolute;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(96, 165, 250, 0.5);
+            animation: float 8s ease-in-out infinite;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border: 2px solid rgba(96, 165, 250, 0.3);
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 50px rgba(96, 165, 250, 0.5);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.05);
+                box-shadow: 0 0 80px rgba(96, 165, 250, 0.8);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 2rem;
+            background: #000;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.05), rgba(167, 139, 250, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(96, 165, 250, 0.3);
+            box-shadow: 0 10px 30px rgba(96, 165, 250, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: #60a5fa;
+        }
+
+        .feature-description {
+            color: #94a3b8;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        /* Components Section */
+        .components {
+            padding: 5rem 2rem;
+            background: #000;
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .component-card {
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(96, 165, 250, 0.3);
+            box-shadow: 0 5px 20px rgba(96, 165, 250, 0.2);
+        }
+
+        .component-brand {
+            font-size: 0.9rem;
+            color: #a78bfa;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .component-name {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #60a5fa;
+        }
+
+        .component-specs {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        /* Guide Section */
+        .guide {
+            padding: 5rem 2rem;
+            background: #000;
+        }
+
+        .guide-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .guide-steps {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .guide-step {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+        }
+
+        .guide-step:hover {
+            border-color: rgba(96, 165, 250, 0.3);
+            box-shadow: 0 5px 20px rgba(96, 165, 250, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .step-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #a78bfa;
+            min-width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(167, 139, 250, 0.1);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            border-radius: 50%;
+        }
+
+        .step-content h3 {
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+        }
+
+        .step-content p {
+            color: #94a3b8;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        /* Language Toggle Section */
+        .team {
+            padding: 5rem 2rem;
+            background: #000;
+        }
+
+        .team-info {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .team-logo {
+            font-size: 6rem;
+            margin-bottom: 2rem;
+        }
+
+        .team-name {
+            font-size: 2.5rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        .team-description {
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+        }
+
+        .team-website {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #a78bfa;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .team-website:hover {
+            color: #60a5fa;
+            text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            background: #000;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            color: #94a3b8;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: #60a5fa;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #a78bfa;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 0, 255, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: #00d4ff;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #00d4ff;
+        }
+
+        .feature-description {
+            color: #a0a0a0;
+            line-height: 1.6;
+        }
+
+        /* Guide Section */
+        .guide {
+            padding: 5rem 2rem;
+            background: #000;
+        }
+
+        .guide-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .guide-steps {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .guide-step {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .guide-step:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .step-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff00ff;
+            min-width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 0, 255, 0.1);
+            border: 2px solid #ff00ff;
+            border-radius: 50%;
+        }
+
+        .step-content h3 {
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: #a0a0a0;
+            line-height: 1.6;
+        }
+
+        /* Components Section */
+        .components {
+            padding: 5rem 2rem;
+            background: #000;
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .component-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            border-color: #00d4ff;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .component-brand {
+            font-size: 0.9rem;
+            color: #ff00ff;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .component-name {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #00d4ff;
+        }
+
+        .component-specs {
+            font-size: 0.8rem;
+            color: #a0a0a0;
+        }
+
+        /* Team Section */
+        .team {
+            padding: 5rem 2rem;
+            background: #000;
+        }
+
+        .team-info {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .team-logo {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+        }
+
+        .team-name {
+            font-size: 2rem;
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        .team-description {
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .team-website {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ff00ff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .team-website:hover {
+            color: #ff66ff;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            background: #000;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            color: #a0a0a0;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: #00d4ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ff00ff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 200px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Космический фон -->
+    <div class="cosmos-background" id="cosmosBackground"></div>
+
+    <!-- Навигация -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-brand">
+                🤖 CELESTIAL FTC
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="active">Главная</a></li>
+                <li><a href="robot-builder-new.html">Игра</a></li>
+                <li><a href="#guide">Руководство</a></li>
+                <li><a href="https://celestialftc.com" target="_blank">Сайт</a></li>
+            </ul>
+            <div class="lang-selector">
+                <button class="lang-btn active" data-lang="ru">RU</button>
+                <button class="lang-btn" data-lang="kz">KZ</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <!-- Space Images -->
+        <div class="space-images">
+            <img src="images/space1.jpg" alt="CELESTIAL FTC Robot" class="space-image">
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title">Robot Builder</h1>
+            <p class="hero-subtitle">Симулятор сборки FTC роботов</p>
+            <div class="team-number">🏆 CELESTIAL FTC #32728 Kazakhstan</div>
+            
+            <div class="hero-buttons">
+                <a href="robot-builder-new.html" class="btn btn-primary">
+                    🚀 Игра
+                </a>
+                <a href="#guide" class="btn btn-info">
+                    📖 Руководство
+                </a>
+                <a href="https://celestialftc.com" target="_blank" class="btn btn-secondary">
+                    🌐 Сайт
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">🌟 Возможности</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3 class="feature-title">Реальные FTC компоненты</h3>
+                    <p class="feature-description">
+                        Используйте настоящие детали REV Robotics, GoBilda и Swift с реальными характеристиками RPM, мощности и веса
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Цели уровня</h3>
+                    <p class="feature-description">
+                        Выполняйте конкретные задачи: установите 4 мотора, 4 колеса, подключите Control Hub и батарею
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Drag & Drop</h3>
+                    <p class="feature-description">
+                        Интуитивный интерфейс перетаскивания деталей с проверкой совместимости и визуальной обратной связью
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Статистика робота</h3>
+                    <p class="feature-description">
+                        Отслеживайте вес, мощность, скорость, точность и надежность вашего робота в реальном времени
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3 class="feature-title">Сохранение прогресса</h3>
+                    <p class="feature-description">
+                        Сохраняйте и загружайте вашу сборку, чтобы продолжить работу над роботом в любое время
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3 class="feature-title">Мультиязычность</h3>
+                    <p class="feature-description">
+                        Поддержка русского, казахского и английского языков для удобства всех пользователей
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Components Section -->
+    <section class="components" id="components">
+        <div class="container">
+            <h2 class="section-title">🔧 Компоненты</h2>
+            <div class="components-grid">
+                <div class="component-card">
+                    <div class="component-brand">REV Robotics</div>
+                    <div class="component-name">HD Hex Motor</div>
+                    <div class="component-specs">435 RPM | 30W | 0.6kg</div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-brand">GoBilda</div>
+                    <div class="component-name">5202 Series Motor</div>
+                    <div class="component-specs">530 RPM | 25W | 0.5kg</div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-brand">Swift</div>
+                    <div class="component-name">High Performance Motor</div>
+                    <div class="component-specs">600 RPM | 35W | 0.4kg</div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-brand">REV Robotics</div>
+                    <div class="component-name">4" Omni Wheel</div>
+                    <div class="component-specs">102mm | 4 Roller</div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-brand">GoBilda</div>
+                    <div class="component-name">96mm Traction Wheel</div>
+                    <div class="component-specs">96mm | Rubber</div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-brand">REV Robotics</div>
+                    <div class="component-name">Control Hub</div>
+                    <div class="component-specs">ARM Cortex-M4 | 8W</div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-brand">REV Robotics</div>
+                    <div class="component-name">REV Battery</div>
+                    <div class="component-specs">12V | 4000mAh | 0.8kg</div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-brand">REV Robotics</div>
+                    <div class="component-name">Color Sensor</div>
+                    <div class="component-specs">RGB Detection | 2W</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guide Section -->
+    <section class="guide" id="guide">
+        <div class="guide-content">
+            <h2 class="section-title">📖 Руководство</h2>
+            <div class="guide-steps">
+                <div class="guide-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Выберите детали</h3>
+                        <p>
+                            Откройте категории в левом сайдбаре: Моторы, Колёса, Контроллеры, Батареи, Сенсоры. 
+                            Каждая категория содержит реальные FTC компоненты от REV Robotics, GoBilda и Swift.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="guide-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Перетащите детали</h3>
+                        <p>
+                            Используйте drag-and-drop для перемещения деталей из сайдбара на слоты робота. 
+                            Система автоматически проверит совместимость деталей со слотами.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="guide-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Выполните цели уровня</h3>
+                        <p>
+                            Установите 4 мотора, 4 колеса, подключите Control Hub и батарею. 
+                            Следите за прогрессом выполнения целей в нижней панели.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="guide-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Протестируйте робота</h3>
+                        <p>
+                            После выполнения всех целей нажмите кнопку "Тест" для проверки робота. 
+                            При успешном тесте станет доступен переход на следующий уровень.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="guide-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Сохраните прогресс</h3>
+                        <p>
+                            Используйте кнопку "Сохранить" для сохранения вашей сборки. 
+                            Прогресс сохраняется в локальном хранилище браузера.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Language Toggle Section -->
+    <section class="team" id="language">
+        <div class="team-info">
+            <div class="team-logo">🌍</div>
+            <h2 class="team-name">Смена языка</h2>
+            <p class="team-description">
+                Выберите удобный язык интерфейса для игры. Поддерживаются русский, казахский и английский языки.
+            </p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="changeLanguage('ru')">
+                    🇷🇺 Русский
+                </button>
+                <button class="btn btn-secondary" onclick="changeLanguage('kz')">
+                    🇰🇿 Қазақша
+                </button>
+                <button class="btn btn-info" onclick="changeLanguage('en')">
+                    🇬🇧 English
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 CELESTIAL FTC #32728. Все права защищены.</p>
+            <div class="footer-links">
+                <a href="robot-builder.html">🎮 Игра</a>
+                <a href="https://celestialftc.com" target="_blank">🌐 Наш сайт</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create animated stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+            
+            // Create shooting stars
+            for (let i = 0; i < 5; i++) {
+                const shootingStar = document.createElement('div');
+                shootingStar.className = 'shooting-star';
+                shootingStar.style.left = Math.random() * 100 + '%';
+                shootingStar.style.top = Math.random() * 50 + '%';
+
+            // Соединяем точки линиями
+            for (let j = 0; j < points.length - 1; j++) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', points[j].x);
+                line.setAttribute('y1', points[j].y);
+                line.setAttribute('x2', points[j + 1].x);
+                line.setAttribute('y2', points[j + 1].y);
+                line.className = 'constellation-line';
+                constellation.appendChild(line);
+            }
+
+            container.appendChild(constellation);
+        }
+    }
+
+    // Обработчики языка
+    function changeLanguage(lang) {
+        localStorage.setItem('selectedLanguage', lang);
+
+        const messages = {
+            'ru': '🇷🇺 Язык изменен на русский',
+            'kz': '🇰🇿 Тіл қазақшаға өзгертілді',
+            'en': '🇬🇧 Language changed to English'
+        };
+
+        showMessage(messages[lang] || 'Language changed', 'success');
+    }
+
+    function showMessage(message, type = 'info') {
+        const colors = {
+            success: '#34d399',
+            error: '#ef4444',
+            warning: '#f59e0b',
+            info: '#60a5fa'
+        };
+
+        const messageDiv = document.createElement('div');
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: ${colors[type]};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        `;
+        messageDiv.textContent = message;
+
+        document.body.appendChild(messageDiv);
+
+        setTimeout(() => {
+            messageDiv.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => messageDiv.remove(), 300);
+        }, 3000);
+    }
+
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', () => {
+        createCosmosBackground();
+
+        // Обработчики языка
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                changeLanguage(btn.dataset.lang);
+            });
+        });
+
+        // Плавная прокрутка
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        console.log('🚀 CELESTIAL FTC Robot Builder initialized!');
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CELESTIAL FTC #32728 - Robot Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Космический фон */
+        .cosmos-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .moving-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: linear-gradient(45deg, transparent, #fff, transparent);
+            animation: shoot 3s linear infinite;
+        }
+
+        @keyframes shoot {
+            
+            0% {
+                transform: translateX(0) translateY(0) rotate(45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(300px) translateY(300px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .galaxy {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.3) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .constellation {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .constellation-line {
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 1;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .nav-links a:hover {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .lang-btn {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .lang-btn:hover {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.3);
+            color: #60a5fa;
+        }
+
+        .lang-btn.active {
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.05) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #94a3b8;
+        }
+
+        .team-number {
+            font-size: 1.4rem;
+            color: #a78bfa;
+            margin-bottom: 3rem;
+            font-weight: bold;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            font-size: 1.1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(96, 165, 250, 0.4);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(96, 165, 250, 0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(167, 139, 250, 0.4);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(167, 139, 250, 0.6);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(52, 211, 153, 0.4);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        .btn-info:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(52, 211, 153, 0.6);
+        }
+
+        /* Space Images */
+        .space-images {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .space-image {
+            position: absolute;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(96, 165, 250, 0.5);
+            animation: float 8s ease-in-out infinite;
+            top: 75%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border: 2px solid rgba(96, 165, 250, 0.3);
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 50px rgba(96, 165, 250, 0.5);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.05);
+                box-shadow: 0 0 80px rgba(96, 165, 250, 0.8);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 2rem;
+            background: #000;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 0, 255, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: #00d4ff;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #00d4ff;
+        }
+
+        .feature-description {
+            color: #a0a0a0;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            background: #000;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            color: #a0a0a0;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: #00d4ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ff00ff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 200px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Космический фон -->
+    <div class="cosmos-background" id="cosmosBackground"></div>
+
+    <!-- Навигация -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-brand">
+                🤖 CELESTIAL FTC
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="active">Главная</a></li>
+                <li><a href="robot-builder-new.html">Игра</a></li>
+                <li><a href="guide.html">Руководство</a></li>
+                <li><a href="https://celestialftc.com" target="_blank">Сайт</a></li>
+            </ul>
+            <div class="lang-selector">
+                <button class="lang-btn active" data-lang="ru">RU</button>
+                <button class="lang-btn" data-lang="kz">KZ</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <!-- Space Images -->
+        <div class="space-images">
+            <img src="images/celestial-robot-final.jpeg" alt="CELESTIAL FTC Robot" class="space-image">
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title">Robot Builder</h1>
+            <p class="hero-subtitle">Симулятор сборки FTC роботов</p>
+            <div class="team-number">🏆 CELESTIAL FTC #32728 Kazakhstan</div>
+            
+            <div class="hero-buttons">
+                <a href="robot-builder-new.html" class="btn btn-primary">
+                    🚀 Игра
+                </a>
+                <a href="guide.html" class="btn btn-info">
+                    📖 Руководство
+                </a>
+                <a href="https://celestialftc.com" target="_blank" class="btn btn-secondary">
+                    🌐 Сайт
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">🌟 Возможности</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3 class="feature-title">Реальные FTC компоненты</h3>
+                    <p class="feature-description">
+                        Используйте настоящие детали REV Robotics, GoBilda и Swift с реальными характеристиками RPM, мощности и веса
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Цели уровня</h3>
+                    <p class="feature-description">
+                        Выполняйте конкретные задачи: установите 4 мотора, 4 колеса, подключите Control Hub и батарею
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Drag & Drop</h3>
+                    <p class="feature-description">
+                        Интуитивный интерфейс перетаскивания деталей с проверкой совместимости и визуальной обратной связью
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Статистика робота</h3>
+                    <p class="feature-description">
+                        Отслеживайте вес, мощность, скорость, точность и надежность вашего робота в реальном времени
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3 class="feature-title">Сохранение прогресса</h3>
+                    <p class="feature-description">
+                        Сохраняйте и загружайте вашу сборку, чтобы продолжить работу над роботом в любое время
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3 class="feature-title">Мультиязычность</h3>
+                    <p class="feature-description">
+                        Поддержка русского, казахского и английского языков для удобства всех пользователей
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>© 2024 CELESTIAL FTC Team #32728. Все права защищены.</p>
+            <div class="footer-links">
+                <a href="https://celestialftc.com" target="_blank">Официальный сайт</a>
+                <a href="https://github.com/celestial-ftc" target="_blank">GitHub</a>
+                <a href="mailto:celestialftc@example.com">Контакты</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function createCosmosBackground() {
+            const cosmos = document.getElementById('cosmosBackground');
+            
+            // 350 звёзд с мерцанием
+            for (let i = 0; i < 350; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 3 + 'px';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                cosmos.appendChild(star);
+            }
+            
+            // 30 движущихся звёзд
+            for (let i = 0; i < 30; i++) {
+                const movingStar = document.createElement('div');
+                movingStar.className = 'moving-star';
+                movingStar.style.left = Math.random() * 100 + '%';
+                movingStar.style.top = Math.random() * 50 + '%';
+                movingStar.style.animationDelay = Math.random() * 5 + 's';
+                movingStar.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                cosmos.appendChild(movingStar);
+            }
+            
+            // 4 галактики с вращением
+            for (let i = 0; i < 4; i++) {
+                const galaxy = document.createElement('div');
+                galaxy.className = 'galaxy';
+                galaxy.style.width = galaxy.style.height = (Math.random() * 200 + 100) + 'px';
+                galaxy.style.left = Math.random() * 100 + '%';
+                galaxy.style.top = Math.random() * 100 + '%';
+                galaxy.style.animationDelay = Math.random() * 10 + 's';
+                galaxy.style.animationDuration = (Math.random() * 20 + 20) + 's';
+                cosmos.appendChild(galaxy);
+            }
+        }
+
+        // Language switching
+        const translations = {
+            'ru': {
+                'nav-brand': '🤖 CELESTIAL FTC',
+                'nav-home': 'Главная',
+                'nav-game': 'Игра',
+                'nav-guide': 'Руководство',
+                'nav-site': 'Сайт',
+                'hero-title': 'Robot Builder',
+                'hero-subtitle': 'Симулятор сборки FTC роботов',
+                'team-number': '🏆 CELESTIAL FTC #32728 Kazakhstan',
+                'btn-play': '🚀 Игра',
+                'btn-guide': '📖 Руководство',
+                'btn-website': '🌐 Сайт',
+                'features-title': '🌟 Возможности',
+                'feature-1-title': 'Реальные FTC компоненты',
+                'feature-1-desc': 'Используйте настоящие детали REV Robotics, GoBilda и Swift с реальными характеристиками RPM, мощности и веса',
+                'feature-2-title': 'Цели уровня',
+                'feature-2-desc': 'Выполняйте конкретные задачи: установите 4 мотора, 4 колеса, подключите Control Hub и батарею',
+                'feature-3-title': 'Drag & Drop',
+                'feature-3-desc': 'Интуитивный интерфейс перетаскивания деталей с проверкой совместимости и визуальной обратной связью',
+                'feature-4-title': 'Статистика робота',
+                'feature-4-desc': 'Отслеживайте вес, мощность, скорость, точность и надежность вашего робота в реальном времени',
+                'feature-5-title': 'Сохранение прогресса',
+                'feature-5-desc': 'Сохраняйте и загружайте вашу сборку, чтобы продолжить работу над роботом в любое время',
+                'feature-6-title': 'Мультиязычность',
+                'feature-6-desc': 'Поддержка русского, казахского и английского языков для удобства всех пользователей',
+                'footer-copyright': '© 2024 CELESTIAL FTC Team #32728. Все права защищены.',
+                'footer-website': 'Официальный сайт',
+                'footer-github': 'GitHub',
+                'footer-contacts': 'Контакты'
+            },
+            'kz': {
+                'nav-brand': '🤖 CELESTIAL FTC',
+                'nav-home': 'Басты бет',
+                'nav-game': 'Ойын',
+                'nav-guide': 'Нұсқаулық',
+                'nav-site': 'Сайт',
+                'hero-title': 'Robot Builder',
+                'hero-subtitle': 'FTC роботтарын жинау симуляторы',
+                'team-number': '🏆 CELESTIAL FTC #32728 Қазақстан',
+                'btn-play': '🚀 Ойын',
+                'btn-guide': '📖 Нұсқаулық',
+                'btn-website': '🌐 Сайт',
+                'features-title': '🌟 Мүмкіндіктер',
+                'feature-1-title': 'Нағты FTC компоненттері',
+                'feature-1-desc': 'REV Robotics, GoBilda және Swift нақты компоненттерді нақты RPM, қуат және салмақ сипаттарымен қолданыңыз',
+                'feature-2-title': 'Деңгей мақсаттар',
+                'feature-2-desc': 'Нақты тапсырмаларды орындаңыз: 4 мотор, 4 дөңгелек, Control Hub және батареяны қосыңыз',
+                'feature-3-title': 'Drag & Drop',
+                'feature-3-desc': 'Компоненттерді сүйре перетасу интерфейсі, үйлесімділік тексеру және визуалды кері байланыс',
+                'feature-4-title': 'Робот статистикасы',
+                'feature-4-desc': 'Сіздің роботыңыздың салмағын, қуатын, жылдамдығын, дәлдігін және сенімділігін нақты уақытта бақылаңыз',
+                'feature-5-title': 'Прогресті сақтау',
+                'feature-5-desc': 'Жинауыңызды сақтап, роботпен жұмысты кез келген уақытта жалғастырыңыз',
+                'feature-6-title': 'Көптілділік',
+                'feature-6-desc': 'Барлық пайдаланушыларға ыңғайлы болу үшін орыс, қазақ және ағылшын тілдерін қолдау',
+                'footer-copyright': '© 2024 CELESTIAL FTC Team #32728. Барлық құқық қорғалған.',
+                'footer-website': 'Ресми сайт',
+                'footer-github': 'GitHub',
+                'footer-contacts': 'Байланыс'
+            },
+            'en': {
+                'nav-brand': '🤖 CELESTIAL FTC',
+                'nav-home': 'Home',
+                'nav-game': 'Game',
+                'nav-guide': 'Guide',
+                'nav-site': 'Site',
+                'hero-title': 'Robot Builder',
+                'hero-subtitle': 'FTC Robot Assembly Simulator',
+                'team-number': '🏆 CELESTIAL FTC #32728 Kazakhstan',
+                'btn-play': '🚀 Play',
+                'btn-guide': '📖 Guide',
+                'btn-website': '🌐 Website',
+                'features-title': '🌟 Features',
+                'feature-1-title': 'Real FTC Components',
+                'feature-1-desc': 'Use authentic REV Robotics, GoBilda and Swift parts with real RPM, power and weight specifications',
+                'feature-2-title': 'Level Goals',
+                'feature-2-desc': 'Complete specific objectives: install 4 motors, 4 wheels, connect Control Hub and battery',
+                'feature-3-title': 'Drag & Drop',
+                'feature-3-desc': 'Intuitive drag and drop interface with compatibility checking and visual feedback',
+                'feature-4-title': 'Robot Statistics',
+                'feature-4-desc': 'Track your robot\'s weight, power, speed, accuracy and reliability in real time',
+                'feature-5-title': 'Progress Saving',
+                'feature-5-desc': 'Save and load your assembly to continue working on your robot anytime',
+                'feature-6-title': 'Multilingual',
+                'feature-6-desc': 'Support for Russian, Kazakh and English languages for all users convenience',
+                'footer-copyright': '© 2024 CELESTIAL FTC Team #32728. All rights reserved.',
+                'footer-website': 'Official Website',
+                'footer-github': 'GitHub',
+                'footer-contacts': 'Contacts'
+            }
+        };
+
+        let currentLang = localStorage.getItem('selectedLanguage') || 'ru';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('selectedLanguage', lang);
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Update navigation
+            document.querySelector('.nav-brand').textContent = translations[lang]['nav-brand'];
+            document.querySelectorAll('.nav-links a')[0].textContent = translations[lang]['nav-home'];
+            document.querySelectorAll('.nav-links a')[1].textContent = translations[lang]['nav-game'];
+            document.querySelectorAll('.nav-links a')[2].textContent = translations[lang]['nav-guide'];
+            document.querySelectorAll('.nav-links a')[3].textContent = translations[lang]['nav-site'];
+            
+            // Update hero section
+            document.querySelector('.hero-title').textContent = translations[lang]['hero-title'];
+            document.querySelector('.hero-subtitle').textContent = translations[lang]['hero-subtitle'];
+            document.querySelector('.team-number').textContent = translations[lang]['team-number'];
+            document.querySelector('.btn-primary').innerHTML = translations[lang]['btn-play'];
+            document.querySelector('.btn-info').innerHTML = translations[lang]['btn-guide'];
+            document.querySelector('.btn-secondary').innerHTML = translations[lang]['btn-website'];
+            
+            // Update features
+            document.querySelector('.section-title').textContent = translations[lang]['features-title'];
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach((card, index) => {
+                const titleKey = `feature-${index + 1}-title`;
+                const descKey = `feature-${index + 1}-desc`;
+                card.querySelector('.feature-title').textContent = translations[lang][titleKey];
+                card.querySelector('.feature-description').textContent = translations[lang][descKey];
+            });
+            
+            // Update footer
+            document.querySelector('.footer-content p').textContent = translations[lang]['footer-copyright'];
+            const footerLinks = document.querySelectorAll('.footer-links a');
+            footerLinks[0].textContent = translations[lang]['footer-website'];
+            footerLinks[1].textContent = translations[lang]['footer-github'];
+            footerLinks[2].textContent = translations[lang]['footer-contacts'];
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createCosmosBackground();
+            
+            // Language switchers
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    changeLanguage(btn.dataset.lang);
+                });
+            });
+            
+            // Set initial language
+            changeLanguage(currentLang);
+        });
+    </script>
+</body>
+</html>

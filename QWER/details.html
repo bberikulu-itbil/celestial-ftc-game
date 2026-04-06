@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали - CELESTIAL FTC #32728</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Космический фон */
+        .cosmos-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .moving-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: linear-gradient(45deg, transparent, #fff, transparent);
+            animation: shoot 3s linear infinite;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translateX(0) translateY(0) rotate(45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(300px) translateY(300px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .galaxy {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.3) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .constellation {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .constellation-line {
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 1;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Навигация */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .nav-links a:hover {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .lang-btn {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .lang-btn:hover {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.3);
+            color: #60a5fa;
+        }
+
+        .lang-btn.active {
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        /* Основной контент */
+        .main-content {
+            padding: 6rem 2rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        .page-title {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Категории деталей */
+        .categories-grid {
+            display: grid;
+            gap: 3rem;
+        }
+
+        .category-section {
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+        }
+
+        .category-title {
+            font-size: 2rem;
+            color: #60a5fa;
+        }
+
+        .parts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .part-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .part-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .part-card:hover::before {
+            left: 100%;
+        }
+
+        .part-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(96, 165, 250, 0.3);
+            box-shadow: 0 5px 20px rgba(96, 165, 250, 0.2);
+        }
+
+        .part-brand {
+            font-size: 0.9rem;
+            color: #a78bfa;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .part-name {
+            font-size: 1.3rem;
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .part-specs {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .part-price {
+            font-size: 1.1rem;
+            color: #34d399;
+            margin-top: 0.5rem;
+            font-weight: bold;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .parts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Космический фон -->
+    <div class="cosmos-background" id="cosmosBackground"></div>
+
+    <!-- Навигация -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-brand">
+                🤖 CELESTIAL FTC
+            </div>
+            <div class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="robot-builder-new.html">Игра</a></li>
+                <li><a href="guide.html">Руководство</a></li>
+                <li><a href="https://celestialftc.com" target="_blank">Сайт</a></li>
+            </div>
+            <div class="lang-selector">
+                <button class="lang-btn active" data-lang="ru">RU</button>
+                <button class="lang-btn" data-lang="kz">KZ</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <h1 class="page-title">🔧 Детали робота</h1>
+        
+        <div class="categories-grid">
+            <!-- База (Frames / Chassis) -->
+            <div class="category-section">
+                <div class="category-header">
+                    <span class="category-icon">⚙️</span>
+                    <h2 class="category-title">База (Frames / Chassis)</h2>
+                </div>
+                <div class="parts-grid">
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="rev-base-plate">REV Base Plate</div>
+                        <div class="part-specs">18" x 18" | 2.5kg | Алюминий</div>
+                        <div class="part-price">$45</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">GoBILDA</div>
+                        <div class="part-name" data-part="gobilda-chassis">GoBILDA Chassis Kit</div>
+                        <div class="part-specs">16" x 16" | 2.2kg | Сталь</div>
+                        <div class="part-price">$39</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">Swift</div>
+                        <div class="part-name" data-part="swift-frame">Swift Frame Kit</div>
+                        <div class="part-specs">20" x 20" | 2.8kg | Карбон</div>
+                        <div class="part-price">$52</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Моторы (Motors) -->
+            <div class="category-section">
+                <div class="category-header">
+                    <span class="category-icon">⚡</span>
+                    <h2 class="category-title">Моторы (Motors)</h2>
+                </div>
+                <div class="parts-grid">
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="rev-core-hex">REV Core Hex Motor</div>
+                        <div class="part-specs">435 RPM | 30W | 0.6kg</div>
+                        <div class="part-price">$65</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="rev-ultraplanetary">REV UltraPlanetary Motor</div>
+                        <div class="part-specs">600 RPM | 35W | 0.5kg</div>
+                        <div class="part-price">$85</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">GoBILDA</div>
+                        <div class="part-name" data-part="gobilda-5202">GoBILDA 5202 Series Motor</div>
+                        <div class="part-specs">530 RPM | 25W | 0.5kg</div>
+                        <div class="part-price">$58</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">GoBILDA</div>
+                        <div class="part-name" data-part="gobilda-435">GoBILDA 435 RPM Motor</div>
+                        <div class="part-specs">435 RPM | 22W | 0.4kg</div>
+                        <div class="part-price">$52</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">Swift</div>
+                        <div class="part-name" data-part="swift-neverrest">Swift NeverRest Motor</div>
+                        <div class="part-specs">700 RPM | 40W | 0.4kg</div>
+                        <div class="part-price">$95</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Колёса (Wheels) -->
+            <div class="category-section">
+                <div class="category-header">
+                    <span class="category-icon">🛞</span>
+                    <h2 class="category-title">Колёса (Wheels)</h2>
+                </div>
+                <div class="parts-grid">
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="rev-traction-wheel">REV Traction Wheel</div>
+                        <div class="part-specs">96mm | Резина | Высокое сцепление</div>
+                        <div class="part-price">$18</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="rev-omni-wheel">REV Omni Wheel</div>
+                        <div class="part-specs">102mm | 4 Roller | Плавное движение</div>
+                        <div class="part-price">$22</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="rev-mecanum-wheel">REV Mecanum Wheel</div>
+                        <div class="part-specs">100mm | 45° Rollers | Omni-движение</div>
+                        <div class="part-price">$35</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">GoBILDA</div>
+                        <div class="part-name" data-part="gobilda-mecanum-wheel">GoBILDA Mecanum Wheel</div>
+                        <div class="part-specs">100mm | Алюминий | Omni-движение</div>
+                        <div class="part-price">$32</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">GoBILDA</div>
+                        <div class="part-name" data-part="gobilda-standard-wheel">GoBILDA Standard Wheel</div>
+                        <div class="part-specs">96mm | Пластик | Лёгкий вес</div>
+                        <div class="part-price">$15</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">Swift</div>
+                        <div class="part-name" data-part="swift-drive-wheel">Swift Drive Wheel</div>
+                        <div class="part-specs">110mm | Карбон | Максимальная скорость</div>
+                        <div class="part-price">$28</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Батареи (Batteries) -->
+            <div class="category-section">
+                <div class="category-header">
+                    <span class="category-icon">🔋</span>
+                    <h2 class="category-title">Батареи (Batteries)</h2>
+                </div>
+                <div class="parts-grid">
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="rev-12v-battery">REV 12V Battery</div>
+                        <div class="part-specs">12V | 4000mAh | 0.8kg | LiPo</div>
+                        <div class="part-price">$75</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">GoBILDA</div>
+                        <div class="part-name" data-part="gobilda-12v-battery">GoBILDA 12V Battery</div>
+                        <div class="part-specs">12V | 3000mAh | 0.7kg | Li-Ion</div>
+                        <div class="part-price">$68</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Контроллеры (Controllers) -->
+            <div class="category-section">
+                <div class="category-header">
+                    <span class="category-icon">🖥</span>
+                    <h2 class="category-title">Контроллеры (Controllers)</h2>
+                </div>
+                <div class="parts-grid">
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="rev-control-hub">REV Control Hub</div>
+                        <div class="part-specs">ARM Cortex-M4 | 8W | WiFi | Bluetooth</div>
+                        <div class="part-price">$425</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="rev-expansion-hub">REV Expansion Hub</div>
+                        <div class="part-specs">I2C/SPI/UART | 5W | 8 моторов</div>
+                        <div class="part-price">$175</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Интейки (Intakes) -->
+            <div class="category-section">
+                <div class="category-header">
+                    <span class="category-icon">🚀</span>
+                    <h2 class="category-title">Интейки (Intakes)</h2>
+                </div>
+                <div class="parts-grid">
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="roller-intake">Roller Intake</div>
+                        <div class="part-specs">2 Roller | 15W | Резиновые валики</div>
+                        <div class="part-price">$45</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="tube-intake">Tube Intake</div>
+                        <div class="part-specs">Трубчатый | 20W | Пневматический</div>
+                        <div class="part-price">$58</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="mecanum-intake">Mecanum Intake</div>
+                        <div class="part-specs">Mecanum | 25W | Omni-захват</div>
+                        <div class="part-price">$72</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шутеры (Shooters) -->
+            <div class="category-section">
+                <div class="category-header">
+                    <span class="category-icon">🎯</span>
+                    <h2 class="category-title">Шутеры (Shooters)</h2>
+                </div>
+                <div class="parts-grid">
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="single-motor-shooter">Single Motor Shooter</div>
+                        <div class="part-specs">1 Wheel | 30W | 500 RPM</div>
+                        <div class="part-price">$85</div>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-brand">REV Robotics</div>
+                        <div class="part-name" data-part="dual-motor-shooter">Dual Motor Shooter</div>
+                        <div class="part-specs">2 Wheel | 60W | 800 RPM</div>
+                        <div class="part-price">$125</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Словари для перевода
+        const translations = {
+            'ru': {
+                'nav-brand': '🤖 CELESTIAL FTC',
+                'nav-home': 'Главная',
+                'nav-game': 'Игра',
+                'nav-details': 'Детали',
+                'nav-guide': 'Руководство',
+                'page-title': '🔧 Детали робота',
+                'category-base': 'База (Frames / Chassis)',
+                'category-motors': 'Моторы (Motors)',
+                'category-wheels': 'Колёса (Wheels)',
+                'category-batteries': 'Батареи (Batteries)',
+                'category-controllers': 'Контроллеры (Controllers)',
+                'category-intakes': 'Интейки (Intakes)',
+                'category-shooters': 'Шутеры (Shooters)',
+                'part-added': 'деталь добавлена в игру',
+                'lang-changed': '🇷🇺 Язык изменен на русский',
+                'parts': {
+                    'rev-base-plate': 'REV Базовая плата',
+                    'gobilda-chassis': 'GoBILDA Шасси',
+                    'swift-frame': 'Swift Каркас',
+                    'rev-core-hex': 'REV Core Hex Мотор',
+                    'rev-ultraplanetary': 'REV UltraPlanetary Мотор',
+                    'gobilda-5202': 'GoBILDA 5202 Мотор',
+                    'gobilda-435': 'GoBILDA 435 Мотор',
+                    'swift-neverrest': 'Swift NeverRest Мотор',
+                    'rev-traction-wheel': 'REV Колесо сцепления',
+                    'rev-omni-wheel': 'REV Omni Колесо',
+                    'rev-mecanum-wheel': 'REV Mecanum Колесо',
+                    'gobilda-mecanum-wheel': 'GoBILDA Mecanum Колесо',
+                    'gobilda-standard-wheel': 'GoBILDA Стандартное колесо',
+                    'swift-drive-wheel': 'Swift Приводное колесо',
+                    'rev-12v-battery': 'REV 12V Батарея',
+                    'gobilda-12v-battery': 'GoBILDA 12V Батарея',
+                    'rev-control-hub': 'REV Control Hub',
+                    'rev-expansion-hub': 'REV Expansion Hub',
+                    'roller-intake': 'Валиковый захват',
+                    'tube-intake': 'Трубчатый захват',
+                    'mecanum-intake': 'Mecanum захват',
+                    'single-motor-shooter': 'Одномоторный шутер',
+                    'dual-motor-shooter': 'Двухмоторный шутер'
+                }
+            },
+            'kz': {
+                'nav-brand': '🤖 CELESTIAL FTC',
+                'nav-home': 'Басты бет',
+                'nav-game': 'Ойын',
+                'nav-details': 'Деректерлер',
+                'nav-guide': 'Нұсқаулық',
+                'page-title': '🔧 Робот детальдары',
+                'category-base': 'Негіз (Frames / Chassis)',
+                'category-motors': 'Моторлар (Motors)',
+                'category-wheels': 'Дөңгелектер (Wheels)',
+                'category-batteries': 'Батареялар (Batteries)',
+                'category-controllers': 'Контроллерлер (Controllers)',
+                'category-intakes': 'Қармау (Intakes)',
+                'category-shooters': 'Атқыштар (Shooters)',
+                'part-added': 'деталь ойынға қосылды',
+                'lang-changed': '🇰🇿 Тіл қазақшаға өзгертілді',
+                'parts': {
+                    'rev-base-plate': 'REV негізгі тақта',
+                    'gobilda-chassis': 'GoBILDA шасси',
+                    'swift-frame': 'Swift каркас',
+                    'rev-core-hex': 'REV Core Hex мотор',
+                    'rev-ultraplanetary': 'REV UltraPlanetary мотор',
+                    'gobilda-5202': 'GoBILDA 5202 мотор',
+                    'gobilda-435': 'GoBILDA 435 мотор',
+                    'swift-neverrest': 'Swift NeverRest мотор',
+                    'rev-traction-wheel': 'REV тарту дөңгелегі',
+                    'rev-omni-wheel': 'REV Omni дөңгелек',
+                    'rev-mecanum-wheel': 'REV Mecanum дөңгелек',
+                    'gobilda-mecanum-wheel': 'GoBILDA Mecanum дөңгелек',
+                    'gobilda-standard-wheel': 'GoBILDA стандартты дөңгелек',
+                    'swift-drive-wheel': 'Swift приводті дөңгелек',
+                    'rev-12v-battery': 'REV 12V батарея',
+                    'gobilda-12v-battery': 'GoBILDA 12V батарея',
+                    'rev-control-hub': 'REV Control Hub',
+                    'rev-expansion-hub': 'REV Expansion Hub',
+                    'roller-intake': 'Валикты қармау',
+                    'tube-intake': 'Түтікшілі қармау',
+                    'mecanum-intake': 'Mecanum қармауы',
+                    'single-motor-shooter': 'Бір моторлы атқыш',
+                    'dual-motor-shooter': 'Екі моторлы атқыш'
+                }
+            },
+            'en': {
+                'nav-brand': '🤖 CELESTIAL FTC',
+                'nav-home': 'Home',
+                'nav-game': 'Game',
+                'nav-details': 'Parts',
+                'nav-guide': 'Guide',
+                'page-title': '🔧 Robot Parts',
+                'category-base': 'Base (Frames / Chassis)',
+                'category-motors': 'Motors',
+                'category-wheels': 'Wheels',
+                'category-batteries': 'Batteries',
+                'category-controllers': 'Controllers',
+                'category-intakes': 'Intakes',
+                'category-shooters': 'Shooters',
+                'part-added': 'part added to game',
+                'lang-changed': '🇬🇧 Language changed to English',
+                'parts': {
+                    'rev-base-plate': 'REV Base Plate',
+                    'gobilda-chassis': 'GoBILDA Chassis Kit',
+                    'swift-frame': 'Swift Frame Kit',
+                    'rev-core-hex': 'REV Core Hex Motor',
+                    'rev-ultraplanetary': 'REV UltraPlanetary Motor',
+                    'gobilda-5202': 'GoBILDA 5202 Series Motor',
+                    'gobilda-435': 'GoBILDA 435 RPM Motor',
+                    'swift-neverrest': 'Swift NeverRest Motor',
+                    'rev-traction-wheel': 'REV Traction Wheel',
+                    'rev-omni-wheel': 'REV Omni Wheel',
+                    'rev-mecanum-wheel': 'REV Mecanum Wheel',
+                    'gobilda-mecanum-wheel': 'GoBILDA Mecanum Wheel',
+                    'gobilda-standard-wheel': 'GoBILDA Standard Wheel',
+                    'swift-drive-wheel': 'Swift Drive Wheel',
+                    'rev-12v-battery': 'REV 12V Battery',
+                    'gobilda-12v-battery': 'GoBILDA 12V Battery',
+                    'rev-control-hub': 'REV Control Hub',
+                    'rev-expansion-hub': 'REV Expansion Hub',
+                    'roller-intake': 'Roller Intake',
+                    'tube-intake': 'Tube Intake',
+                    'mecanum-intake': 'Mecanum Intake',
+                    'single-motor-shooter': 'Single Motor Shooter',
+                    'dual-motor-shooter': 'Dual Motor Shooter'
+                }
+            }
+        };
+
+        // Инициализация космического фона
+        function createCosmosBackground() {
+            const cosmos = document.getElementById('cosmosBackground');
+            
+            // 350 звёзд с мерцанием
+            for (let i = 0; i < 350; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 3 + 'px';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                cosmos.appendChild(star);
+            }
+            
+            // 30 движущихся звёзд
+            for (let i = 0; i < 30; i++) {
+                const movingStar = document.createElement('div');
+                movingStar.className = 'moving-star';
+                movingStar.style.left = Math.random() * 100 + '%';
+                movingStar.style.top = Math.random() * 50 + '%';
+                movingStar.style.animationDelay = Math.random() * 5 + 's';
+                movingStar.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                cosmos.appendChild(movingStar);
+            }
+            
+            // 4 галактики с вращением
+            for (let i = 0; i < 4; i++) {
+                const galaxy = document.createElement('div');
+                galaxy.className = 'galaxy';
+                galaxy.style.width = galaxy.style.height = (Math.random() * 200 + 100) + 'px';
+                galaxy.style.left = Math.random() * 100 + '%';
+                galaxy.style.top = Math.random() * 100 + '%';
+                galaxy.style.animationDelay = Math.random() * 10 + 's';
+                galaxy.style.animationDuration = (Math.random() * 20 + 20) + 's';
+                cosmos.appendChild(galaxy);
+            }
+            
+            // Созвездия
+            createConstellations(cosmos);
+        }
+
+        function createConstellations(container) {
+            const constellationCount = 5;
+            for (let i = 0; i < constellationCount; i++) {
+                const constellation = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                constellation.className = 'constellation';
+                constellation.style.position = 'absolute';
+                constellation.style.left = Math.random() * 80 + '%';
+                constellation.style.top = Math.random() * 80 + '%';
+                constellation.style.width = '200px';
+                constellation.style.height = '200px';
+                
+                // Создаем случайные точки созвездия
+                const points = [];
+                const pointCount = Math.floor(Math.random() * 4) + 3;
+                for (let j = 0; j < pointCount; j++) {
+                    points.push({
+                        x: Math.random() * 180 + 10,
+                        y: Math.random() * 180 + 10
+                    });
+                    
+                    // Добавляем звёзды в точках
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    star.style.left = points[j].x + 'px';
+                    star.style.top = points[j].y + 'px';
+                    star.style.width = star.style.height = '2px';
+                    container.appendChild(star);
+                }
+                
+                // Соединяем точки линиями
+                for (let j = 0; j < points.length - 1; j++) {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', points[j].x);
+                    line.setAttribute('y1', points[j].y);
+                    line.setAttribute('x2', points[j + 1].x);
+                    line.setAttribute('y2', points[j + 1].y);
+                    line.className = 'constellation-line';
+                    constellation.appendChild(line);
+                }
+                
+                container.appendChild(constellation);
+            }
+        }
+
+        // Обработчики языка
+        function changeLanguage(lang) {
+            localStorage.setItem('selectedLanguage', lang);
+            
+            const t = translations[lang];
+            if (t) {
+                // Перевод навигации
+                document.querySelector('.nav-brand').textContent = t['nav-brand'];
+                document.querySelectorAll('.nav-links a')[0].textContent = t['nav-home'];
+                document.querySelectorAll('.nav-links a')[1].textContent = t['nav-game'];
+                document.querySelectorAll('.nav-links a')[2].textContent = t['nav-guide'];
+                document.querySelectorAll('.nav-links a')[3].textContent = t['nav-site'];
+                
+                // Перевод заголовка страницы
+                const pageTitle = document.querySelector('.page-title');
+                if (pageTitle) pageTitle.textContent = t['page-title'];
+                
+                // Перевод категорий
+                const categoryTitles = document.querySelectorAll('.category-title');
+                if (categoryTitles[0]) categoryTitles[0].textContent = t['category-base'];
+                if (categoryTitles[1]) categoryTitles[1].textContent = t['category-motors'];
+                if (categoryTitles[2]) categoryTitles[2].textContent = t['category-wheels'];
+                if (categoryTitles[3]) categoryTitles[3].textContent = t['category-batteries'];
+                if (categoryTitles[4]) categoryTitles[4].textContent = t['category-controllers'];
+                if (categoryTitles[5]) categoryTitles[5].textContent = t['category-intakes'];
+                if (categoryTitles[6]) categoryTitles[6].textContent = t['category-shooters'];
+                
+                // Перевод названий деталей
+                const partNames = document.querySelectorAll('.part-name[data-part]');
+                partNames.forEach(partName => {
+                    const partKey = partName.getAttribute('data-part');
+                    if (t.parts && t.parts[partKey]) {
+                        partName.textContent = t.parts[partKey];
+                    }
+                });
+            }
+            
+            showMessage(t['lang-changed'], 'success');
+        }
+
+        function showMessage(message, type = 'info') {
+            const colors = {
+                success: '#34d399',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#60a5fa'
+            };
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${colors[type]};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 500;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            messageDiv.textContent = message;
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => messageDiv.remove(), 300);
+            }, 3000);
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            createCosmosBackground();
+            
+            // Инициализация языка
+            function initializeLanguage() {
+                const savedLang = localStorage.getItem('selectedLanguage') || 'ru';
+                
+                // Установка активной кнопки
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.lang === savedLang) {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                // Применение перевода
+                changeLanguage(savedLang);
+            }
+            
+            // Обработчики языка
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    changeLanguage(btn.dataset.lang);
+                });
+            });
+            
+            // Инициализация языка при загрузке
+            initializeLanguage();
+            
+            // Обработчики карточек деталей
+            document.querySelectorAll('.part-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const partName = card.querySelector('.part-name').textContent;
+                    const partBrand = card.querySelector('.part-brand').textContent;
+                    const t = translations[localStorage.getItem('selectedLanguage') || 'ru'];
+                    const message = t['part-added'] || `${partBrand} ${partName} - деталь добавлена в игру`;
+                    showMessage(message, 'success');
+                });
+            });
+            
+            console.log('🔧 CELESTIAL FTC Parts Catalog initialized!');
+        });
+    </script>
+</body>
+</html>

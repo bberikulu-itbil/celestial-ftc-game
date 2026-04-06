@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Руководство - FTC Team #32728 CELESTIAL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Космический фон */
+        .cosmos-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #0a0a0a 0%, #000000 100%);
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Навигация */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #60a5fa, #a78bfa, #f59e0b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .nav-links a:hover {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 0.5rem;
+            order: 2;
+        }
+
+        .lang-btn {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .lang-btn:hover {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.3);
+            color: #60a5fa;
+        }
+
+        .lang-btn.active {
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        /* Основной контент */
+        main {
+            padding: 6rem 2rem 2rem;
+            min-height: 100vh;
+        }
+
+        .guide-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(30, 41, 59, 0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .guide-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #60a5fa;
+            margin-bottom: 2rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .guide-section {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(96, 165, 250, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #a78bfa;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tip-card {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid #60a5fa;
+            transition: all 0.3s ease;
+        }
+
+        .tip-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+        }
+
+        .tip-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+
+        .tip-content {
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .recommendation {
+            background: rgba(52, 211, 153, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        .recommendation-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #34d399;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recommendation-content {
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .guide-container {
+                padding: 1rem;
+            }
+            
+            .guide-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Космический фон -->
+    <div class="cosmos-background" id="cosmosBackground"></div>
+
+    <!-- Навигация -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-brand">
+                🤖 CELESTIAL FTC
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="robot-builder-new.html">Игра</a></li>
+                <li><a href="guide.html">Руководство</a></li>
+                <li><a href="https://celestialftc.com" target="_blank">Сайт</a></li>
+            </ul>
+            <div class="lang-selector">
+                <button class="lang-btn active" data-lang="ru">RU</button>
+                <button class="lang-btn" data-lang="kz">KZ</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main>
+        <div class="guide-container">
+            <h1 class="guide-title">📖 Руководство по сборке робота FTC</h1>
+            
+            <div class="guide-section">
+                <h2 class="section-title">🏗️ Выбор подходящей базы</h2>
+                
+                <div class="tip-card">
+                    <div class="tip-title">💡 Совет: Начните с REV Base Plate</div>
+                    <div class="tip-content" data-content="base-tip1">
+                        <strong>REV Base Plate</strong> обеспечивает прочную основу для большинства конструкций. 
+                        Размер <span class="highlight">18" x 18"</span> и вес <span class="highlight">5.2кг</span> 
+                        делают его идеальным выбором для начинающих команд.
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-title">🔧 Альтернатива: GoBILDA Chassis Kit</div>
+                    <div class="tip-content" data-content="base-tip2">
+                        <strong>GoBILDA Chassis Kit</strong> предлагает лёгкий вес (<span class="highlight">4.8кг</span>) и 
+                        модульность. Размер <span class="highlight">16" x 16"</span> подходит для компактных конструкций.
+                    </div>
+                </div>
+                
+                <div class="recommendation">
+                    <div class="recommendation-title">⭐ Рекомендация</div>
+                    <div class="recommendation-content" data-content="base-rec">
+                        Для лучшей совместимости с другими компонентами выбирайте <strong>REV Base Plate</strong>.
+                        Он обеспечивает оптимальное соотношение прочности и веса для соревнований FTC.
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-section">
+                <h2 class="section-title">⚙️ Моторы и контроллеры</h2>
+                
+                <div class="tip-card">
+                    <div class="tip-title">🎯 Оптимальная конфигурация</div>
+                    <div class="tip-content" data-content="motors-tip1">
+                        Используйте <span class="highlight">4 мотора REV Core Hex</span> для достижения 
+                        максимальной мощности. Каждый мотор обеспечивает <span class="highlight">72Вт</span> при весе <span class="highlight">450г</span>.
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-title">📱 Контрольные хабы</div>
+                    <div class="tip-content" data-content="motors-tip2">
+                        <strong>REV Control Hub</strong> - основной контроллер с WiFi и Bluetooth.
+                        <strong>REV Expansion Hub</strong> - дополнительный для подключения до 8 моторов.
+                        Обязательно используйте оба для полной функциональности.
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-section">
+                <h2 class="section-title">🛞️ Колёса и шасси</h2>
+                
+                <div class="tip-card">
+                    <div class="tip-title">🏎️ Типы колёс</div>
+                    <div class="tip-content">
+                        <strong>REV Traction Wheel</strong> - для максимального сцепления с полем.<br>
+                        <strong>REV Omni Wheel</strong> - для плавного движения в любом направлении.<br>
+                        <strong>REV Mecanum Wheel</strong> - для омни-движения и манёвренности.
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-title">⚖️ Баланс веса</div>
+                    <div class="tip-content">
+                        Старайтесь сохранять баланс между мощностью и весом. 
+                        Оптимальный вес робота для FTC: <span class="highlight">12-15кг</span>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-section">
+                <h2 class="section-title">🔋 Питание и электроника</h2>
+                
+                <div class="tip-card">
+                    <div class="tip-title">🔋 Батарея</div>
+                    <div class="tip-content">
+                        <strong>REV 12V Battery</strong> обеспечивает <span class="highlight">4000mAh</span> ёмкости.
+                        Всегда имейте запасную батарею для соревнований.
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-title">📊 Оптимизация характеристик</div>
+                    <div class="tip-content">
+                        • <strong>Скорость:</span> 2.5-3.0 м/с для манёвренности<br>
+                        • <strong>Точность:</span> 70-80% для точных задач<br>
+                        • <strong>Надёжность:</span> 80-90% для долгой работы
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-section">
+                <h2 class="section-title">🎯 Стратегии сборки</h2>
+                
+                <div class="tip-card">
+                    <div class="tip-title">📋 Порядок сборки</div>
+                    <div class="tip-content">
+                        1. Установите <strong>базу</strong><br>
+                        2. Добавьте <strong>моторы и колёса</strong><br>
+                        3. Подключите <strong>контрольные хабы</strong><br>
+                        4. Установите <strong>батарею</strong><br>
+                        5. Добавьте <strong>функциональные компоненты</strong>
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-title">🔧 Тестирование</div>
+                    <div class="tip-content">
+                        После сборки обязательно протестируйте все системы:
+                        движение, захват, управление. Проверьте надёжность соединений.
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-section">
+                <h2 class="section-title">🏆 Соревновательные советы</h2>
+                
+                <div class="tip-card">
+                    <div class="tip-title">🏆 Правила FTC</div>
+                    <div class="tip-content">
+                        • Максимальный размер робота: <span class="highlight">45.7cm x 45.7cm x 45.7cm</span><br>
+                        • Максимальный вес: <span class="highlight">16.8кг</span><br>
+                        • Используйте только сертифицированные компоненты
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-title">🎯 Эффективные практики</div>
+                    <div class="tip-content">
+                        • Регулярно проверяйте соединения<br>
+                        • Имейте набор инструментов для ремонта<br>
+                        • Тренируйте управление роботом<br>
+                        • Изучайте правила соревнований
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Словари для перевода
+        const translations = {
+            'ru': {
+                'nav-brand': '🤖 CELESTIAL FTC',
+                'nav-home': 'Главная',
+                'nav-game': 'Игра',
+                'nav-site': 'Сайт',
+                'nav-guide': 'Руководство',
+                'nav-details': 'Детали',
+                'guide-title': '📖 Руководство по сборке робота FTC',
+                'section-base': '🏗️ Выбор подходящей базы',
+                'section-motors': '⚙️ Моторы и контроллеры',
+                'section-wheels': '🛞️ Колёса и шасси',
+                'section-power': '🔋 Питание и электроника',
+                'section-strategy': '🎯 Стратегии сборки',
+                'section-competition': '🏆 Соревновательные советы',
+                'tip-base': '💡 Совет: Начните с REV Base Plate',
+                'tip-alternative': '🔧 Альтернатива: GoBILDA Chassis Kit',
+                'tip-optimization': '🎯 Оптимальная конфигурация',
+                'tip-controllers': '📱 Контрольные хабы',
+                'tip-wheels': '🏎️ Типы колёс',
+                'tip-balance': '⚖️ Баланс веса',
+                'tip-battery': '🔋 Батарея',
+                'tip-stats': '📊 Оптимизация характеристик',
+                'tip-assembly': '📋 Порядок сборки',
+                'tip-testing': '🔧 Тестирование',
+                'tip-rules': '🏆 Правила FTC',
+                'tip-practices': '🎯 Эффективные практики',
+                'recommendation': '⭐ Рекомендация',
+                'lang-changed': '🇷🇺 Язык изменен на русский',
+                'content': {
+                    'base-tip1': '<strong>REV Base Plate</strong> обеспечивает прочную основу для большинства конструкций. Размер <span class="highlight">18" x 18"</span> и вес <span class="highlight">5.2кг</span> делают его идеальным выбором для начинающих команд.',
+                    'base-tip2': '<strong>GoBILDA Chassis Kit</strong> предлагает лёгкий вес (<span class="highlight">4.8кг</span>) и модульность. Размер <span class="highlight">16" x 16"</span> подходит для компактных конструкций.',
+                    'base-rec': 'Для лучшей совместимости с другими компонентами выбирайте <strong>REV Base Plate</strong>. Он обеспечивает оптимальное соотношение прочности и веса для соревнований FTC.',
+                    'motors-tip1': 'Используйте <span class="highlight">4 мотора REV Core Hex</span> для достижения максимальной мощности. Каждый мотор обеспечивает <span class="highlight">72Вт</span> при весе <span class="highlight">450г</span>.',
+                    'motors-tip2': '<strong>REV Control Hub</strong> - основной контроллер с WiFi и Bluetooth. <strong>REV Expansion Hub</strong> - дополнительный для подключения до 8 моторов. Обязательно используйте оба для полной функциональности.'
+                }
+            },
+            'kz': {
+                'nav-brand': '🤖 CELESTIAL FTC',
+                'nav-home': 'Басты бет',
+                'nav-game': 'Ойын',
+                'nav-site': 'Сайт',
+                'nav-guide': 'Нұсқаулық',
+                'nav-details': 'Деректерлер',
+                'guide-title': '📖 FTC роботын жинау нұсқаулығы',
+                'section-base': '🏗️ Тайланды негізді таңдау',
+                'section-motors': '⚙️ Моторлар мен контроллерлер',
+                'section-wheels': '🛞️ Дөңгелер мен шасси',
+                'section-power': '🔋 Қоректану және электроника',
+                'section-strategy': '🎯 Жинау стратегиялары',
+                'section-competition': '🏆 Байқылау кеңестері',
+                'tip-base': '💡 Кеңес: REV Base Plate бастаңыз',
+                'tip-alternative': '🔧 Балама: GoBILDA Chassis Kit',
+                'tip-optimization': '🎯 Оптималды конфигурация',
+                'tip-controllers': '📱 Басқарғышылар',
+                'tip-wheels': '🏎️ Дөңгелер түрлері',
+                'tip-balance': '⚖️ Салмақ теңдестіру',
+                'tip-battery': '🔋 Батарея',
+                'tip-stats': '📊 Сипаттарды оптимизациялау',
+                'tip-assembly': '📋 Жинау реті',
+                'tip-testing': '🔧 Сынау',
+                'tip-rules': '🏆 FTC ережелері',
+                'tip-practices': '🎯 Тиімді әдістер',
+                'recommendation': '⭐ Ұсыныс',
+                'lang-changed': '🇰🇿 Тіл қазақшаға өзгертілді',
+                'content': {
+                    'base-tip1': '<strong>REV Base Plate</strong> көптеген конструкциялар үшін мықты негізді қамтамасыз етеді. <span class="highlight">18" x 18"</span> өлшемі және <span class="highlight">5.2кг</span> салмағы оны бастаушы командалар үшін идеалды таңдауға айналдырады.',
+                    'base-tip2': '<strong>GoBILDA Chassis Kit</strong> жеңіл салмақты (<span class="highlight">4.8кг</span>) және модульділікті ұсынады. <span class="highlight">16" x 16"</span> өлшемі компактты конструкцияларға жарайды.',
+                    'base-rec': 'Басқа компоненттермен жақсы үйлесімділік үшін <strong>REV Base Plate</strong> таңдаңыз. Ол FTC байқаулары үшін беріктік пен салмақтың оңтайлы қатынасын қамтамасыз етеді.',
+                    'motors-tip1': 'Максималды қуатқа жету үшін <span class="highlight">4 REV Core Hex моторын</span> пайдаланыңыз. Әрбір мотор <span class="highlight">450г</span> салмағымен <span class="highlight">72Вт</span> қуат береді.',
+                    'motors-tip2': '<strong>REV Control Hub</strong> - WiFi және Bluetooth бар негізгі контроллер. <strong>REV Expansion Hub</strong> - 8 моторға дейін қосуға арналған қосымша. Толық функционалдылық үшін екеуін де міндетті түрде пайдаланыңыз.'
+                }
+            },
+            'en': {
+                'nav-brand': '🤖 CELESTIAL FTC',
+                'nav-home': 'Home',
+                'nav-game': 'Game',
+                'nav-site': 'Site',
+                'nav-guide': 'Guide',
+                'nav-details': 'Details',
+                'guide-title': '📖 FTC Robot Building Guide',
+                'section-base': '🏗️ Choosing the Right Base',
+                'section-motors': '⚙️ Motors and Controllers',
+                'section-wheels': '🛞️ Wheels and Chassis',
+                'section-power': '🔋 Power and Electronics',
+                'section-strategy': '🎯 Assembly Strategies',
+                'section-competition': '🏆 Competition Tips',
+                'tip-base': '💡 Tip: Start with REV Base Plate',
+                'tip-alternative': '🔧 Alternative: GoBILDA Chassis Kit',
+                'tip-optimization': '🎯 Optimal Configuration',
+                'tip-controllers': '📱 Control Hubs',
+                'tip-wheels': '🏎️ Wheel Types',
+                'tip-balance': '⚖️ Weight Balance',
+                'tip-battery': '🔋 Battery',
+                'tip-stats': '📊 Performance Optimization',
+                'tip-assembly': '📋 Assembly Order',
+                'tip-testing': '🔧 Testing',
+                'tip-rules': '🏆 FTC Rules',
+                'tip-practices': '🎯 Best Practices',
+                'recommendation': '⭐ Recommendation',
+                'lang-changed': '🇬🇧 Language changed to English',
+                'content': {
+                    'base-tip1': '<strong>REV Base Plate</strong> provides a solid foundation for most constructions. The <span class="highlight">18" x 18"</span> size and <span class="highlight">5.2kg</span> weight make it an ideal choice for beginner teams.',
+                    'base-tip2': '<strong>GoBILDA Chassis Kit</strong> offers lightweight (<span class="highlight">4.8kg</span>) and modularity. The <span class="highlight">16" x 16"</span> size is suitable for compact constructions.',
+                    'base-rec': 'For better compatibility with other components, choose <strong>REV Base Plate</strong>. It provides optimal strength-to-weight ratio for FTC competitions.',
+                    'motors-tip1': 'Use <span class="highlight">4 REV Core Hex motors</span> to achieve maximum power. Each motor provides <span class="highlight">72W</span> at <span class="highlight">450g</span> weight.',
+                    'motors-tip2': '<strong>REV Control Hub</strong> - main controller with WiFi and Bluetooth. <strong>REV Expansion Hub</strong> - additional for connecting up to 8 motors. Definitely use both for full functionality.'
+                }
+            }
+        };
+
+        // Функция перевода
+        function changeLanguage(lang) {
+            localStorage.setItem('selectedLanguage', lang);
+            
+            // Перевод навигации
+            document.querySelector('.nav-brand').textContent = translations[lang]['nav-brand'];
+            document.querySelectorAll('.nav-links a')[0].textContent = translations[lang]['nav-home'];
+            document.querySelectorAll('.nav-links a')[1].textContent = translations[lang]['nav-game'];
+            document.querySelectorAll('.nav-links a')[2].textContent = translations[lang]['nav-guide'];
+            document.querySelectorAll('.nav-links a')[3].textContent = translations[lang]['nav-site'];
+            
+            // Перевод заголовка
+            document.querySelector('.guide-title').textContent = translations[lang]['guide-title'];
+            
+            // Перевод секций
+            const sections = document.querySelectorAll('.section-title');
+            if (sections[0]) sections[0].textContent = translations[lang]['section-base'];
+            if (sections[1]) sections[1].textContent = translations[lang]['section-motors'];
+            if (sections[2]) sections[2].textContent = translations[lang]['section-wheels'];
+            if (sections[3]) sections[3].textContent = translations[lang]['section-power'];
+            if (sections[4]) sections[4].textContent = translations[lang]['section-strategy'];
+            if (sections[5]) sections[5].textContent = translations[lang]['section-competition'];
+            
+            // Перевод советов
+            const tips = document.querySelectorAll('.tip-title');
+            if (tips[0]) tips[0].textContent = translations[lang]['tip-base'];
+            if (tips[1]) tips[1].textContent = translations[lang]['tip-alternative'];
+            if (tips[2]) tips[2].textContent = translations[lang]['tip-optimization'];
+            if (tips[3]) tips[3].textContent = translations[lang]['tip-controllers'];
+            if (tips[4]) tips[4].textContent = translations[lang]['tip-wheels'];
+            if (tips[5]) tips[5].textContent = translations[lang]['tip-balance'];
+            if (tips[6]) tips[6].textContent = translations[lang]['tip-battery'];
+            if (tips[7]) tips[7].textContent = translations[lang]['tip-stats'];
+            if (tips[8]) tips[8].textContent = translations[lang]['tip-assembly'];
+            if (tips[9]) tips[9].textContent = translations[lang]['tip-testing'];
+            if (tips[10]) tips[10].textContent = translations[lang]['tip-rules'];
+            if (tips[11]) tips[11].textContent = translations[lang]['tip-practices'];
+            
+            // Перевод рекомендации
+            const recommendations = document.querySelectorAll('.recommendation-title');
+            if (recommendations[0]) recommendations[0].textContent = translations[lang]['recommendation'];
+            
+            // Перевод контента
+            const contentElements = document.querySelectorAll('.tip-content[data-content], .recommendation-content[data-content]');
+            contentElements.forEach(element => {
+                const contentKey = element.getAttribute('data-content');
+                if (translations[lang].content && translations[lang].content[contentKey]) {
+                    element.innerHTML = translations[lang].content[contentKey];
+                }
+            });
+            
+            showMessage(translations[lang]['lang-changed'], 'success');
+        }
+
+        // Инициализация языка при загрузке
+        function initializeLanguage() {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'ru';
+            
+            // Установка активной кнопки
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.lang === savedLang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Применение перевода
+            changeLanguage(savedLang);
+        }
+
+        function showMessage(message, type = 'info') {
+            const colors = {
+                success: '#34d399',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#60a5fa'
+            };
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${colors[type]};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                font-weight: 500;
+            `;
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(messageDiv);
+                }, 300);
+            }, 3000);
+        }
+
+        // Создание космического фона
+        function createCosmosBackground() {
+            const cosmosBackground = document.getElementById('cosmosBackground');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 3 + 'px';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                cosmosBackground.appendChild(star);
+            }
+        }
+
+        // Анимации
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            @keyframes shimmer {
+                0%, 100% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+            }
+            @keyframes twinkle {
+                0%, 100% { opacity: 0.3; }
+                50% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            createCosmosBackground();
+            
+            // Обработчики языка
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const lang = btn.dataset.lang;
+                    changeLanguage(lang);
+                });
+            });
+            
+            // Инициализация языка
+            initializeLanguage();
+            
+            console.log('🚀 CELESTIAL FTC Guide initialized!');
+        });
+    </script>
+</body>
+</html>
