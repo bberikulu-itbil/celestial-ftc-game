@@ -482,10 +482,10 @@
                 🤖 CELESTIAL FTC
             </div>
             <ul class="nav-links">
-                <li><a href="#home" class="active">Главная</a></li>
+                <li><a href="index.html" class="active">Главная</a></li>
                 <li><a href="robot-builder-new.html">Игра</a></li>
+                <li><a href="details.html">Детали</a></li>
                 <li><a href="guide.html">Руководство</a></li>
-                <li><a href="https://celestialftc.com" target="_blank">Сайт</a></li>
             </ul>
             <div class="lang-selector">
                 <button class="lang-btn active" data-lang="ru">RU</button>
@@ -511,10 +511,13 @@
                 <a href="robot-builder-new.html" class="btn btn-primary">
                     🚀 Игра
                 </a>
-                <a href="guide.html" class="btn btn-info">
+                <a href="details.html" class="btn btn-info">
+                    ⚙️ Детали
+                </a>
+                <a href="guide.html" class="btn btn-secondary">
                     📖 Руководство
                 </a>
-                <a href="https://celestialftc.com" target="_blank" class="btn btn-secondary">
+                <a href="https://itbil.kz/celestial" target="_blank" class="btn btn-outline">
                     🌐 Сайт
                 </a>
             </div>
@@ -582,7 +585,7 @@
         <div class="footer-content">
             <p>© 2024 CELESTIAL FTC Team #32728. Все права защищены.</p>
             <div class="footer-links">
-                <a href="https://celestialftc.com" target="_blank">Официальный сайт</a>
+                <a href="https://itbil.kz/celestial" target="_blank">Официальный сайт</a>
                 <a href="https://github.com/celestial-ftc" target="_blank">GitHub</a>
                 <a href="mailto:celestialftc@example.com">Контакты</a>
             </div>
@@ -634,12 +637,13 @@
                 'nav-brand': '🤖 CELESTIAL FTC',
                 'nav-home': 'Главная',
                 'nav-game': 'Игра',
+                'nav-details': 'Детали',
                 'nav-guide': 'Руководство',
-                'nav-site': 'Сайт',
                 'hero-title': 'Robot Builder',
                 'hero-subtitle': 'Симулятор сборки FTC роботов',
                 'team-number': '🏆 CELESTIAL FTC #32728 Kazakhstan',
                 'btn-play': '🚀 Игра',
+                'btn-details': '⚙️ Детали',
                 'btn-guide': '📖 Руководство',
                 'btn-website': '🌐 Сайт',
                 'features-title': '🌟 Возможности',
@@ -664,12 +668,13 @@
                 'nav-brand': '🤖 CELESTIAL FTC',
                 'nav-home': 'Басты бет',
                 'nav-game': 'Ойын',
+                'nav-details': 'Деталдар',
                 'nav-guide': 'Нұсқаулық',
-                'nav-site': 'Сайт',
                 'hero-title': 'Robot Builder',
                 'hero-subtitle': 'FTC роботтарын жинау симуляторы',
                 'team-number': '🏆 CELESTIAL FTC #32728 Қазақстан',
                 'btn-play': '🚀 Ойын',
+                'btn-details': '⚙️ Деталдар',
                 'btn-guide': '📖 Нұсқаулық',
                 'btn-website': '🌐 Сайт',
                 'features-title': '🌟 Мүмкіндіктер',
@@ -694,12 +699,13 @@
                 'nav-brand': '🤖 CELESTIAL FTC',
                 'nav-home': 'Home',
                 'nav-game': 'Game',
+                'nav-details': 'Details',
                 'nav-guide': 'Guide',
-                'nav-site': 'Site',
                 'hero-title': 'Robot Builder',
                 'hero-subtitle': 'FTC Robot Assembly Simulator',
                 'team-number': '🏆 CELESTIAL FTC #32728 Kazakhstan',
                 'btn-play': '🚀 Play',
+                'btn-details': '⚙️ Details',
                 'btn-guide': '📖 Guide',
                 'btn-website': '🌐 Website',
                 'features-title': '🌟 Features',
@@ -740,16 +746,17 @@
             document.querySelector('.nav-brand').textContent = translations[lang]['nav-brand'];
             document.querySelectorAll('.nav-links a')[0].textContent = translations[lang]['nav-home'];
             document.querySelectorAll('.nav-links a')[1].textContent = translations[lang]['nav-game'];
-            document.querySelectorAll('.nav-links a')[2].textContent = translations[lang]['nav-guide'];
-            document.querySelectorAll('.nav-links a')[3].textContent = translations[lang]['nav-site'];
+            document.querySelectorAll('.nav-links a')[2].textContent = translations[lang]['nav-details'];
+            document.querySelectorAll('.nav-links a')[3].textContent = translations[lang]['nav-guide'];
             
             // Update hero section
             document.querySelector('.hero-title').textContent = translations[lang]['hero-title'];
             document.querySelector('.hero-subtitle').textContent = translations[lang]['hero-subtitle'];
             document.querySelector('.team-number').textContent = translations[lang]['team-number'];
             document.querySelector('.btn-primary').innerHTML = translations[lang]['btn-play'];
-            document.querySelector('.btn-info').innerHTML = translations[lang]['btn-guide'];
-            document.querySelector('.btn-secondary').innerHTML = translations[lang]['btn-website'];
+            document.querySelector('.btn-info').innerHTML = translations[lang]['btn-details'];
+            document.querySelector('.btn-secondary').innerHTML = translations[lang]['btn-guide'];
+            document.querySelector('.btn-outline').innerHTML = translations[lang]['btn-website'];
             
             // Update features
             document.querySelector('.section-title').textContent = translations[lang]['features-title'];
